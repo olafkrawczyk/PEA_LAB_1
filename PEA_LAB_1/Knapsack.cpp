@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Knapsack.h"
-#include "Solution.h"
 
 Knapsack::Knapsack()
 {
@@ -103,17 +102,6 @@ bool Knapsack::bruteForce() {
 	return true;
 }
 
-
-struct SolCompare
-{
-	bool operator()( Solution *t1, Solution *t2) const
-	{
-		return t1->getValue() > t2->getValue();
-	}
-};
-
-
-
 float Knapsack::bound(Node u, int n, int W)
 {
 	if (u.weight >= W)
@@ -176,7 +164,14 @@ int Knapsack::BNB()
 		without.bound = bound(without, items.size(), capacity);
 		if (without.bound > maxProfit) {
 			Q.push(without);
-		}	
+		}
+
+		u.items.clear();
+		u.items.shrink_to_fit();
+		without.items.clear();
+		with.items.clear();
+		without.items.shrink_to_fit();
+		with.items.shrink_to_fit();
 	}
 	
 	std::cout << "Taken items: \n";

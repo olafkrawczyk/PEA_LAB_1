@@ -39,9 +39,6 @@ class Knapsack
 	int sumSize;
 	std::vector<Item*> items;
 
-	friend class Solution;
-
-
 public:
 	Knapsack();
 	Knapsack(int capacity);
