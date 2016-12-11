@@ -52,13 +52,13 @@ bool Knapsack::bruteForce() {
 	int setSize = items.size(); // iloœc przedmiotów, które mo¿emy w³o¿yæ do plecaka
 
 	if (setSize > 64) {
-		std::cout << "\nZbyt du¿a liczba elementów, iloœc elemetów musi byæ mniejsza ni¿ 65\n";
+		std::cout << "\nZbyt duza liczba elementow, ilosc elemetow musi byc mniejsza niz 65\n";
 		return false;
 	}
 	int size = items.size();
 	unsigned long long int setCntr = (1ULL << size); // Poniewa¿ dokonujemy przegl¹du zupe³nego, musimy zbadaæ wszystkie podzbiory na wejœcu
 													 // Których jest 2^n, 
-	std::cout << "Rozmiar itemkow: " << size << std::endl;
+	std::cout << "Ilosc przedmiotow: " << size << std::endl;
 	std::cout << "Ilosc iteracji: " << setCntr << std::endl;
 
 	for (unsigned long long int i = 0; i < setCntr; i++) {
