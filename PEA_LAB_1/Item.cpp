@@ -22,7 +22,7 @@ void Item::setValue(int weight)
 	this->value = weight;
 }
 
-int Item::getSize()
+int Item::getWeight()
 {
 	return this->size;
 }
@@ -44,5 +44,5 @@ Item::~Item()
 
 std::ostream & operator<<(std::ostream & os, Item & iItem)
 {
-	return  os << "<Item s: " << iItem.getSize() << " v: " << iItem.getValue() << ">";
+	return  os << "<Item s: " << iItem.getWeight() << " v: " << iItem.getValue() << ">";
 }

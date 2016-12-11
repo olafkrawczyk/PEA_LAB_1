@@ -21,8 +21,7 @@ int main()
 	if(plecak->inputFromFile(filename))
 		plecak->sortItemsByRatio();
 		plecak->printItems();
-
-	plecak->BNB();
+		std::cout << "Profit: " << plecak->BNB() << std::endl;
 	system("pause");
     return 0;
 }

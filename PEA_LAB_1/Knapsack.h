@@ -2,7 +2,14 @@
 #include "stdafx.h"
 #include "Item.h"
 #include <vector>
-#
+#include <queue>
+
+struct Node
+{
+	int level, profit, bound;
+	float weight;
+	
+};
 
 class Knapsack
 {
@@ -22,10 +29,12 @@ public:
 	~Knapsack();
 	bool inputFromFile(std::string filename);
 	bool bruteForce();
-	bool BNB();
+	int BNB();
 	void sortItemsByRatio();
 	void printItems();
 	void setCapacity(int capacity);
 	int getCapacity();
 	
+
+	float bound(Node u, int n, int W);
 };

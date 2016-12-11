@@ -8,7 +8,7 @@ public:
 	Item(int size, int value);
 	void setSize(int size);
 	void setValue(int value);
-	int getSize();
+	int getWeight();
 	int getValue();
 	float getRatio();
 	friend std::ostream& operator<<(std::ostream&, Item& iItem);

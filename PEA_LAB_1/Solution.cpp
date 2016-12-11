@@ -43,18 +43,18 @@ float Solution::calculateUpperBound()
 	int i = cur_item;
 	for (i; i < knap->items.size(); i++)
 	{
-		weight += knap->items[i]->getSize();
+		weight += knap->items[i]->getWeight();
 		if (weight <= knap->capacity) {
 			value += knap->items[i]->getValue();
 		}
 		else
 			break;
 	}
-	if (i >= knap->items.size())
-		i--;
-	upper_bound = value + (knap->capacity - weight) * knap->items[i]->getRatio();
+	if (i < knap->items.size())
+		value += (knap->capacity - weight) * knap->items[i]->getValue()/ knap->items[i]->getWeight();
 	
-	return upper_bound;
+	upper_bound = value;
+	return value;
 }
 
 int Solution::getWeight()
@@ -66,7 +66,7 @@ int Solution::getWeight()
 
 	for (int i = 0; i < taken.size(); i++)
 	{
-		temp_weight += knap->items[i]->getSize()*taken[i];
+		temp_weight += knap->items[i]->getWeight()*taken[i];
 	}
 
 	return temp_weight;

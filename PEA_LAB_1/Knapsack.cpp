@@ -73,7 +73,7 @@ bool Knapsack::bruteForce() {
 		for (int k = 0; k < setSize; k++) {
 			if (((currSet >> k) & 1) != 1) continue;
 
-			sumSize += items[k]->getSize();
+			sumSize += items[k]->getWeight();
 			sumVal += items[k]->getValue();
 			tempSolution.push_back(items[k]);
 
@@ -112,53 +112,87 @@ struct SolCompare
 	}
 };
 
-bool Knapsack::BNB()
+
+
+float Knapsack::bound(Node u, int n, int W)
 {
-	Solution *best = new Solution(*this);
-	Solution *root = new Solution(*this);
+	if (u.weight >= W)
+		return 0;
+	int profit_bound = u.profit;
+	int j = u.level + 1;
+	int totweight = u.weight;
 
-	Solution *tmp;
-	Solution *tmp2;
-
-	root->calculateUpperBound();
-
-	std::priority_queue<Solution, std::vector<Solution*>, SolCompare> *queue = new std::priority_queue<Solution, std::vector<Solution*>, SolCompare>();
-	queue->push(root);
-	
-	while (!queue->empty()) {
-
-		root = queue->top();
-		tmp = new Solution(*this, *root);
-		tmp2 = new Solution(*this, *root);
-		
-		if (tmp->getCurr() < items.size() - 1 && tmp->calculateUpperBound() > best->getValue()) {
-			if (tmp->getWeight() + items[tmp->getCurr()]->getSize() <= capacity) {
-				tmp->addItem(1);
-
-				if (tmp->getValue() > best->getValue()) {
-					delete best;
-					best = new Solution(*tmp);
-				}
-				if (tmp->calculateUpperBound() > best->getValue()) {
-					queue->push(new Solution(*tmp));
-				}
-			}
-		}
-		delete tmp;
-		if (tmp2->getCurr() < items.size() - 1 && tmp2->calculateUpperBound() > best->getValue()) {
-			if (tmp2->getWeight() + items[tmp2->getCurr()]->getSize() <= capacity) {
-				tmp2->addItem(0);
-				if (tmp2->calculateUpperBound() > best->getValue()) {
-
-					queue->push(new Solution(*tmp2));
-				}
-			}
-		}
-		delete tmp2;
-		queue->pop();
+	while ((j < n) && (totweight + items[j]->getWeight()  <= W))
+	{
+		totweight += items[j]->getWeight();
+		profit_bound += items[j]->getValue();
+		j++;
 	}
-	best->print_solution();
-	return false;
+	if (j < n)
+		profit_bound += (W - totweight) * items[j]->getValue() / items[j]->getWeight();
+
+	return profit_bound;
+}
+
+int Knapsack::BNB()
+{
+	sortItemsByRatio();
+	std::queue<Node> Q;
+	Node u, v;
+
+	u.level = -1;
+	u.profit = u.weight = 0;
+	Q.push(u);
+	std::vector<Item> taken = *new std::vector<Item>();
+	int maxProfit = 0;
+	while (!Q.empty())
+	{
+		u = Q.front();
+		Q.pop();
+
+		if (u.level == -1)
+			v.level = 0;
+
+		if (u.level == items.size() - 1)
+			continue;
+		v.level = u.level + 1;
+		v.weight = u.weight + items[v.level]->getWeight();
+		v.profit = u.profit + items[v.level]->getValue();
+		
+
+		if (v.weight <= capacity && v.profit > maxProfit) {
+ 
+			maxProfit = v.profit;
+		}
+
+		v.bound = bound(v, items.size(), capacity);
+
+		if (v.bound > maxProfit) {
+			Q.push(v);
+		}
+
+		v.weight = u.weight;
+		v.profit = u.profit;
+		
+		v.bound = bound(v, items.size(), capacity);
+		if (v.bound > maxProfit) {
+			Q.push(v);
+		}	
+	}
+	
+	std::cout << "Taken items: \n";
+	int totalWeight = 0;
+	int totalValue = 0;
+	for (int i = 0; i < taken.size(); i++)
+	{
+		std::cout << taken[i] << std::endl;
+		totalWeight += taken[i].getWeight();
+		totalValue += taken[i].getValue();
+	}
+	std::cout << "Total value: " << totalValue << std::endl;
+	std::cout << "Total weight: " << totalWeight << std::endl;
+
+	return maxProfit;
 }
 
 bool compRatio(Item* a, Item* b)
