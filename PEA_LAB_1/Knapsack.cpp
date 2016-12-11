@@ -138,10 +138,10 @@ int Knapsack::BNB()
 {
 	sortItemsByRatio();
 	std::queue<Node> Q;
-	Node u, v;
+	Node v;
 
-	u.level = -1;
-	u.profit = u.weight = 0;
+	Node u = Node(-1, 0, 0);
+
 	Q.push(u);
 	std::vector<Item> taken = *new std::vector<Item>();
 	int maxProfit = 0;
@@ -155,28 +155,27 @@ int Knapsack::BNB()
 
 		if (u.level == items.size() - 1)
 			continue;
-		v.level = u.level + 1;
-		v.weight = u.weight + items[v.level]->getWeight();
-		v.profit = u.profit + items[v.level]->getValue();
+		Node with = Node(u.level + 1, u.profit + items[u.level + 1]->getValue(), u.weight + items[u.level + 1]->getWeight());
+		with.items = *new std::vector<Item>(u.items);
+		with.items.push_back(*items[with.level]);
 		
-
-		if (v.weight <= capacity && v.profit > maxProfit) {
- 
-			maxProfit = v.profit;
+		if (with.weight <= capacity && with.profit > maxProfit) {
+			taken = with.items;
+			maxProfit = with.profit;
 		}
 
-		v.bound = bound(v, items.size(), capacity);
+		with.bound = bound(with, items.size(), capacity);
 
-		if (v.bound > maxProfit) {
-			Q.push(v);
+		if (with.bound > maxProfit) {
+			Q.push(with);
 		}
 
-		v.weight = u.weight;
-		v.profit = u.profit;
-		
-		v.bound = bound(v, items.size(), capacity);
-		if (v.bound > maxProfit) {
-			Q.push(v);
+		Node without = Node(u.level + 1, u.profit, u.weight);
+		without.items = *new std::vector<Item>(u.items);
+
+		without.bound = bound(without, items.size(), capacity);
+		if (without.bound > maxProfit) {
+			Q.push(without);
 		}	
 	}
 	

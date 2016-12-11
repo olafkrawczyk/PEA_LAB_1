@@ -8,7 +8,26 @@ struct Node
 {
 	int level, profit, bound;
 	float weight;
-	
+	std::vector<Item> items;
+	Node() {
+
+	}
+	Node(int l, int p, float w) {
+		level = l;
+		profit = p;
+		weight = w;
+	}
+	Node(const Node& n) {
+		level = n.level;
+		profit = n.profit;
+		weight = n.weight;
+		bound = n.bound;
+		items = *new std::vector<Item>(n.items);
+	}
+	~Node() {
+		items.clear();
+		items.shrink_to_fit();
+	}
 };
 
 class Knapsack
