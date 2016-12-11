@@ -126,51 +126,38 @@ bool Knapsack::BNB()
 	queue->push(root);
 	
 	while (!queue->empty()) {
-		
+
 		root = queue->top();
-		queue->pop();
 		tmp = new Solution(*this, *root);
-
-		tmp->addItem(1);
-		
-		if (tmp->getWeight() <= capacity && tmp->takenSize() < items.size() - 1) {
-			
-			tmp->calculateUpperBound();
-			if (tmp->getUpperBound() > best->getValue()) {
-				queue->push(tmp);
-			}
-			else
-				delete tmp;
-			if (tmp->getValue() > best->getValue()) {
-				delete best;
-				best = new Solution(*tmp);
-			}
-			
-		}
-		else {
-			delete tmp;
-		}
-
 		tmp2 = new Solution(*this, *root);
-		tmp2->addItem(0);
+		
+		if (tmp->getCurr() < items.size() - 1 && tmp->calculateUpperBound() > best->getValue()) {
+			if (tmp->getWeight() + items[tmp->getCurr()]->getSize() <= capacity) {
+				tmp->addItem(1);
 
-		if (tmp2->takenSize() < items.size() - 1)
-		{
-			tmp2->calculateUpperBound();
-			if (tmp2->getUpperBound() > best->getValue())
-				queue->push(tmp2);
-			else
-				delete tmp2;
+				if (tmp->getValue() > best->getValue()) {
+					delete best;
+					best = new Solution(*tmp);
+				}
+				if (tmp->calculateUpperBound() > best->getValue()) {
+					queue->push(new Solution(*tmp));
+				}
+			}
 		}
-		else
-			delete tmp2;
+		delete tmp;
+		if (tmp2->getCurr() < items.size() - 1 && tmp2->calculateUpperBound() > best->getValue()) {
+			if (tmp2->getWeight() + items[tmp2->getCurr()]->getSize() <= capacity) {
+				tmp2->addItem(0);
+				if (tmp2->calculateUpperBound() > best->getValue()) {
 
-		delete root;
-
+					queue->push(new Solution(*tmp2));
+				}
+			}
+		}
+		delete tmp2;
+		queue->pop();
 	}
-
 	best->print_solution();
-
 	return false;
 }
 

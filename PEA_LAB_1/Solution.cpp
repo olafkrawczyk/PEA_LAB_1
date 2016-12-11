@@ -33,7 +33,7 @@ Solution::Solution(Knapsack & knap, Solution & sol)
 	upper_bound = sol.upper_bound;
 }
 
-void Solution::calculateUpperBound()
+float Solution::calculateUpperBound()
 {
 
 	upper_bound = 0;
@@ -53,6 +53,8 @@ void Solution::calculateUpperBound()
 	if (i >= knap->items.size())
 		i--;
 	upper_bound = value + (knap->capacity - weight) * knap->items[i]->getRatio();
+	
+	return upper_bound;
 }
 
 int Solution::getWeight()
@@ -118,7 +120,6 @@ Solution::~Solution()
 {
 	taken.clear();
 	taken.shrink_to_fit();
-	delete knap;
 	cur_item = 0;
 	upper_bound = 0;
 	total_weight = 0;

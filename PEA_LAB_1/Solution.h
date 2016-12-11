@@ -19,7 +19,7 @@ public:
 	Solution(const Solution & sol);
 	Solution(Knapsack &knap);
 	Solution(Knapsack &knap, Solution &sol);
-	void calculateUpperBound();
+	float calculateUpperBound();
 	int getWeight();
 	int getCurr();
 	int getValue();
