@@ -50,7 +50,6 @@ public:
 	void printItems();
 	void setCapacity(int capacity);
 	int getCapacity();
-	
 
 	float bound(Node u, int n, int W);
 };
