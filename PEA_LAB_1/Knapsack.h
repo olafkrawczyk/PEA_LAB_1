@@ -22,7 +22,8 @@ struct Node
 		profit = n.profit;
 		weight = n.weight;
 		bound = n.bound;
-		items = *new std::vector<Item>(n.items);
+		//items = *new std::vector<Item>(n.items);
+		items = n.items;
 	}
 	~Node() {
 		items.clear();

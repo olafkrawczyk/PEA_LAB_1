@@ -145,7 +145,7 @@ int main()
 
 	char k = 'z';
 
-	/*while (k != '6')
+	while (k != '6')
 	{
 		switch (k)
 		{
@@ -179,9 +179,9 @@ int main()
 			k = getchar();
 			break;
 		}
-	}*/
+	}
 
-	make_tests(plecak);
+	//make_tests(plecak);
 	system("pause");
 	return 0;
 }

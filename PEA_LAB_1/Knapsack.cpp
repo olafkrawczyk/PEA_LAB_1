@@ -19,12 +19,14 @@ Knapsack::~Knapsack()
 
 bool Knapsack::inputFromFile(std::string filename)
 {
+	items.clear();
 	int tempSize, tempWeight;
 	std::ifstream plik(filename, std::ios::in);
 	if (plik) {
 		plik >> this->allItems;
 		for (int i = 0; i < this->allItems; i++)
 		{
+			
 			plik >> tempSize;
 			plik >> tempWeight;
 			items.push_back(*new Item(tempSize, tempWeight));
