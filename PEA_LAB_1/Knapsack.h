@@ -37,19 +37,20 @@ class Knapsack
 	int allItems;
 	int sumVal;
 	int sumSize;
-	std::vector<Item*> items;
+	std::vector<Item> items;
 
 public:
 	Knapsack();
 	Knapsack(int capacity);
 	~Knapsack();
 	bool inputFromFile(std::string filename);
-	bool bruteForce();
-	int BNB();
+	bool bruteForce(bool);
+	int BNB(bool);
 	void sortItemsByRatio();
 	void printItems();
 	void setCapacity(int capacity);
 	int getCapacity();
+	int setItems(std::vector<Item> items);
 
 	float bound(Node u, int n, int W);
 };

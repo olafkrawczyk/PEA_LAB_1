@@ -6,12 +6,33 @@
 #include <string>
 #include "Knapsack.h"
 #include "PEA_LAB_1.h"
+#include <cstdlib>
+#include <time.h>
+#include <Windows.h>
 
 using namespace std;
 
+LARGE_INTEGER startTimer()											//funkcje mierzace czas
+{
+	LARGE_INTEGER start;
+	DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 0);
+	QueryPerformanceCounter(&start);
+	SetThreadAffinityMask(GetCurrentThread(), oldmask);
+	return start;
+}
+
+LARGE_INTEGER endTimer()
+{
+	LARGE_INTEGER stop;
+	DWORD_PTR oldmask = SetThreadAffinityMask(GetCurrentThread(), 0);
+	QueryPerformanceCounter(&stop);
+	SetThreadAffinityMask(GetCurrentThread(), oldmask);
+	return stop;
+}
+
 void header() {
 	std::cout << "PEA LAB 1 - Knapsack B&B | Olaf Krawczyk 218126 | 10.12.2016 \n" <<
-			     "----------------------------------------------------------------\n";
+		"----------------------------------------------------------------\n";
 }
 char menu_glowne() {
 	system("cls");
@@ -40,13 +61,13 @@ void run_bnb(Knapsack * plecak) {
 	system("cls");
 	header();
 	std::cout << "Uruchomiono Branch and Bound \n";
-	plecak->BNB();
+	plecak->BNB(true);
 }
 void run_bruteforce(Knapsack * plecak) {
 	system("cls");
 	header();
 	std::cout << "Uruchomiono Brute Force \n";
-	plecak->bruteForce();
+	plecak->bruteForce(true);
 }
 void wypisz_plecak(Knapsack * plecak) {
 	system("cls");
@@ -63,14 +84,68 @@ void zmien_rozmiar(Knapsack * plecak) {
 	plecak->setCapacity(new_size);
 }
 
+std::vector<Item> wygeneruj_problem(int n) {
+	std::vector<Item> tmp = *new std::vector<Item>();
+	for (int i = 0; i < n; i++)
+	{
+		tmp.push_back(*new Item(rand() % 900, rand() % 900));
+	}
+	return tmp;
+}
+void make_tests(Knapsack * plecak) {
+	std::fstream plik;
+	LARGE_INTEGER performanceCountStart, performanceCountEnd, freq;
+	QueryPerformanceFrequency(&freq);
+	double tm;
+	int capacity = 900;
+	int sizesCnt = 7;
+	int sizes[] = { 10, 50, 80, 150, 200, 230, 260 };
+	std::vector<Item> problem;
+	double **wyniki = new double*[sizesCnt];
+	for (int i = 0; i < sizesCnt; i++)
+	{
+		wyniki[i] = new double[2];
+		wyniki[i][0] = 0;
+		wyniki[i][1] = 0;
+	}
+
+	plecak->setCapacity(capacity);
+	int k = 4;
+	int tries = 100;
+		for (int j = 0; j < tries; j++)
+		{
+			problem = wygeneruj_problem(sizes[k]);
+			plecak->setItems(problem);
+			performanceCountStart = startTimer();
+			plecak->BNB(false);
+			performanceCountEnd = endTimer();
+			tm = (double)(performanceCountEnd.QuadPart - performanceCountStart.QuadPart);
+			wyniki[k][1] += (tm / freq.QuadPart * 100) * 10;
+			problem.clear();
+			problem.shrink_to_fit();
+		}
+		wyniki[k][0] = sizes[k];
+		wyniki[k][1] /= tries;
+
+		string nazwa_pliku = "results_bb";
+		std::string out_name = nazwa_pliku + "_" + std::to_string(sizes[k]) + ".csv";
+		plik.open(out_name, std::ios::out);
+
+			plik << wyniki[k][1] << ";";
+			plik << std::endl;
+
+		plik.close();
+}
+
 int main()
-{	
+{
+	srand(time(NULL));
 	Knapsack *plecak = new Knapsack(10);
-	
+
 
 	char k = 'z';
 
-	while (k != '6')
+	/*while (k != '6')
 	{
 		switch (k)
 		{
@@ -104,8 +179,10 @@ int main()
 			k = getchar();
 			break;
 		}
-	}
+	}*/
+
+	make_tests(plecak);
 	system("pause");
-    return 0;
+	return 0;
 }
 
