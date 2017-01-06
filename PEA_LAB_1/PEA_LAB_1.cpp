@@ -37,7 +37,7 @@ void header() {
 char menu_glowne() {
 	system("cls");
 	header();
-	std::cout << "1. Wczytaj dane z pliku\n2. B&B\n3. Brute Force\n4. Wypisz przedmioty\n5. Zmien pojemnosc plecaka\n6. Koniec\n";
+	std::cout << "1. Wczytaj dane z pliku\n2. B&B\n3. Brute Force\n4. Dynamic Programming\n5. Wypisz przedmioty\n6. Zmien pojemnosc plecaka\n7. Koniec\n";
 	std::cout << "Wybor: ";
 	return 'z';
 }
@@ -69,6 +69,12 @@ void run_bruteforce(Knapsack * plecak) {
 	std::cout << "Uruchomiono Brute Force \n";
 	plecak->bruteForce(true);
 }
+void run_dp(Knapsack * plecak) {
+	system("cls");
+	header();
+	std::cout << "Uruchomiono Programowanie dynamiczne \n";
+	plecak->DP(true);
+}
 void wypisz_plecak(Knapsack * plecak) {
 	system("cls");
 	header();
@@ -99,7 +105,7 @@ void make_tests(Knapsack * plecak) {
 	double tm;
 	int capacity = 900;
 	int sizesCnt = 7;
-	int sizes[] = { 10, 50, 80, 150, 200, 230, 260 };
+	int sizes[] = {10, 50, 100, 200, 300, 400, 500};
 	std::vector<Item> problem;
 	double **wyniki = new double*[sizesCnt];
 	for (int i = 0; i < sizesCnt; i++)
@@ -110,31 +116,43 @@ void make_tests(Knapsack * plecak) {
 	}
 
 	plecak->setCapacity(capacity);
-	int k = 4;
 	int tries = 100;
+	for (int k = 0; k < sizesCnt; k++)
+	{
 		for (int j = 0; j < tries; j++)
 		{
 			problem = wygeneruj_problem(sizes[k]);
 			plecak->setItems(problem);
 			performanceCountStart = startTimer();
-			plecak->BNB(false);
+			plecak->DP(false);
 			performanceCountEnd = endTimer();
 			tm = (double)(performanceCountEnd.QuadPart - performanceCountStart.QuadPart);
 			wyniki[k][1] += (tm / freq.QuadPart * 100) * 10;
+
 			problem.clear();
 			problem.shrink_to_fit();
 		}
 		wyniki[k][0] = sizes[k];
 		wyniki[k][1] /= tries;
+	}
+	string nazwa_pliku = "results_dp";
+	std::string out_name = nazwa_pliku + ".csv";
+	plik.open(out_name, std::ios::out);
 
-		string nazwa_pliku = "results_bb";
-		std::string out_name = nazwa_pliku + "_" + std::to_string(sizes[k]) + ".csv";
-		plik.open(out_name, std::ios::out);
+	
+	plik << std::endl;
 
-			plik << wyniki[k][1] << ";";
-			plik << std::endl;
 
-		plik.close();
+	for (int i = 0; i < sizesCnt; i++)
+	{
+		plik << sizes[i] << ";";
+	}
+	plik << "\n";
+	for (int i = 0; i < sizesCnt; i++)
+	{
+		plik << wyniki[i][1] << ";";
+	}
+	plik.close();
 }
 
 int main()
@@ -144,8 +162,7 @@ int main()
 
 
 	char k = 'z';
-
-	while (k != '6')
+	while (k != '7')
 	{
 		switch (k)
 		{
@@ -165,11 +182,16 @@ int main()
 			k = 'z';
 			break;
 		case '4':
-			wypisz_plecak(plecak);
+			run_dp(plecak);
 			system("pause");
 			k = 'z';
 			break;
 		case '5':
+			wypisz_plecak(plecak);
+			system("pause");
+			k = 'z';
+			break;
+		case '6':
 			zmien_rozmiar(plecak);
 			system("pause");
 			k = 'z';
@@ -181,7 +203,7 @@ int main()
 		}
 	}
 
-	//make_tests(plecak);
+	make_tests(plecak);
 	system("pause");
 	return 0;
 }

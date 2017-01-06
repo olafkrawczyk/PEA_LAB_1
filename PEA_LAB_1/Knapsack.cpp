@@ -193,15 +193,83 @@ int Knapsack::BNB(bool showResults)
 	return maxProfit;
 }
 
+int max(int a, int b) { return (a > b) ? a : b; }
+
+bool Knapsack::DP(bool showResults)
+{
+	int itemsCnt = items.size();
+	sortItemsByWeight();
+
+	int **dp = new int*[itemsCnt + 1];
+	for (int i = 0; i < itemsCnt + 1; i++)
+	{
+		dp[i] = new int[capacity + 1];
+	}
+
+	for (int i = 0; i <= itemsCnt; i++)
+	{
+		for (int k = 0; k <= capacity; k++)
+		{
+			if (i == 0 || k == 0)
+				dp[i][k] = 0;
+			else if (items[i - 1].getWeight() <= k)
+				dp[i][k] = max(items[i - 1].getValue() + dp[i - 1][k - items[i - 1].getWeight()], dp[i - 1][k]);
+			else
+				dp[i][k] = dp[i - 1][k];
+		}
+	}
+
+	if (showResults) {
+		std::vector<Item> solution;
+		int cntr = capacity;
+		for (int i = itemsCnt; i > 0; i--)
+		{
+			if (dp[i][cntr] == 0)
+				break;
+			if (dp[i][cntr] == dp[i - 1][cntr])
+				continue;
+			solution.push_back(items[i - 1]);
+			cntr -= items[i - 1].getWeight();
+		}
+
+		std::cout << "Wybrane przedmioty: " << std::endl;
+		for (int i = 0; i < solution.size(); i++)
+		{
+			std::cout << solution[i] << std::endl;
+		}
+
+		std::cout << "Wartosc plecaka: " << dp[itemsCnt][capacity] << std::endl;
+
+		solution.clear();
+		solution.shrink_to_fit();
+	}
+
+	for (int i = 0; i < itemsCnt; i++)
+	{
+		delete dp[i];
+	}
+	delete dp;
+	return false;
+}
+
 bool compRatio(Item a, Item b)
 {
 	return a.getRatio() > b.getRatio();
+}
+
+bool compWeight(Item a, Item b) {
+	return a.getWeight() < b.getWeight();
 }
 
 
 void Knapsack::sortItemsByRatio()
 {
 	std::sort(this->items.begin(), this->items.end(), compRatio);
+}
+
+void Knapsack::sortItemsByWeight()
+{
+	std::sort(this->items.begin(), this->items.end(), compWeight);
 }
 
 
@@ -228,10 +296,11 @@ int Knapsack::getCapacity()
 
 int Knapsack::setItems(std::vector<Item> items)
 {
+	/*
 	if (this->items.size() != 0) {
 		items.clear();
 		items.shrink_to_fit();
-	}
-	this->items = *new std::vector<Item>(items);
+	}*/
+	this->items = std::vector<Item>(items);
 	return 0;
 }

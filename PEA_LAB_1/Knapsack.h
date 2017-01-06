@@ -47,7 +47,9 @@ public:
 	bool inputFromFile(std::string filename);
 	bool bruteForce(bool);
 	int BNB(bool);
+	bool DP(bool);
 	void sortItemsByRatio();
+	void sortItemsByWeight();
 	void printItems();
 	void setCapacity(int capacity);
 	int getCapacity();
